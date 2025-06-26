@@ -29,9 +29,10 @@ int KomplettSchließen = 1;
 double cash = 0;
 
 FrageCode();
+
 async void FrageCode()
 {
-    int Passwort = 568765;
+    int Passwort = 2001;
     int Wiederholungen = 0;
 
 
@@ -61,32 +62,39 @@ async void FrageCode()
         }
 
 
-void LadeDaten()
-{
-    string[] lines = File.ReadAllLines("saved.csv");
-    string[] data;
-
-    if (File.Exists("saved.csv"))
-    {
-        for (int i = 0; i < lines.Length - 1; i++)
+        void LadeDaten()
         {
-            data = lines[i].Split(';');
+            string[] lines = File.ReadAllLines("saved.csv");
+            string[] data;
 
-            Produktname[i] = data[0];
-            Lagerstand[i] = int.Parse(data[1]);
-            Preise[i] = double.Parse(data[2]);
+            if (File.Exists("saved.csv"))
+            {
+                try
+                {
+                    for (int i = 0; i < lines.Length - 1; i++)
+                    {
+                        data = lines[i].Split(';');
+
+                        Produktname[i] = data[0];
+                        Lagerstand[i] = int.Parse(data[1]);
+                        Preise[i] = double.Parse(data[2]);
+                    }
+
+                    cash = double.Parse(lines[lines.Length - 1]);
+                    Console.WriteLine("daten wurden geladen");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Gespeicherte Daten wurden aufgrund des Fehlers {e.Message} nicht geladen.");
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("Keine gespeicherten Daten gefunden. Standarddaten werden verwendet.");
+                LadeStandarddaten();
+            }
         }
-
-        cash = double.Parse(lines[lines.Length - 1]);
-
-        Console.WriteLine("daten wurden geladen");
-    }
-    else
-    {
-        Console.WriteLine("Keine gespeicherten Daten gefunden. Standarddaten werden verwendet.");
-        LadeStandarddaten();
-    }
-}
 
 
 
@@ -196,12 +204,12 @@ void LadeDaten()
 
 
 
-void SpeichereDaten()
-{
-    try
-    {
-        string[] data = new string[Produktname.Length];
-        string[] lines = new string[Produktname.Length];
+        void SpeichereDaten()
+        {
+            try
+            {
+                string[] data = new string[Produktname.Length];
+                string[] lines = new string[Produktname.Length];
 
                 data[0] = "ProduktName;Lagerstand;Preise";
 
@@ -215,8 +223,8 @@ void SpeichereDaten()
                     data[i + 1] = combined;
                 }
 
-        data[data.Length - 1] = Convert.ToString(cash);
-        File.WriteAllLines("saved.csv", data);
+                data[data.Length - 1] = Convert.ToString(cash);
+                File.WriteAllLines("saved.csv", data);
 
                 Console.WriteLine($"Daten wurden erfolgreich in '' gespeichert.");
             }
@@ -431,7 +439,7 @@ void SpeichereDaten()
     else
     {
 
-        while(Wiederholungen != 10)
+        while (Wiederholungen != 10)
         {
             Console.Beep();
             await Task.Delay(100);

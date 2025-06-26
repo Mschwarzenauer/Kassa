@@ -87,6 +87,7 @@ async void FrageCode()
                 catch (Exception e)
                 {
                     Console.WriteLine($"Gespeicherte Daten wurden aufgrund des Fehlers {e.Message} nicht geladen.");
+                    LadeStandarddaten();
                 }
 
             }

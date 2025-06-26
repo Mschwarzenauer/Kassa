@@ -9,7 +9,7 @@ using System.IO;
 
 Console.OutputEncoding = Encoding.UTF8;
 Console.ForegroundColor = ConsoleColor.DarkGray;
-Console.CursorVisible = true;
+Console.CursorVisible = false;
 
 
 int[] Lagerstand = new int[1000]; 
@@ -435,7 +435,6 @@ async void FrageCode()
             Console.ReadLine();
             Console.Clear();
         }
-        Console.CursorVisible = true;
     }
     else
     {

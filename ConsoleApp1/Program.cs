@@ -64,11 +64,13 @@ async void FrageCode()
 
         void LadeDaten()
         {
-            string[] lines = File.ReadAllLines("saved.csv");
-            string[] data;
+
 
             if (File.Exists("saved.csv"))
             {
+                string[] lines = File.ReadAllLines("saved.csv");
+                string[] data;
+
                 try
                 {
                     for (int i = 0; i < lines.Length - 1; i++)

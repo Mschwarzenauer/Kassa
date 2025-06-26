@@ -7,6 +7,7 @@ using System;
 using System.Text;
 using System.IO;
 using System.Threading.Tasks;
+using Spectre.Console;
 
 Console.OutputEncoding = Encoding.UTF8;
 Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -25,323 +26,323 @@ string weiterhinGeeoffnet;
 int KomplettSchließen = 1;
 double cash = 0;
 
-FrageCode();
 
-async void FrageCode()
+AnsiConsole.Write(
+    new FigletText("Projekt - Kassa")
+        .LeftJustified()
+        .Color(Color.Red));
+
+
+int Passwort = 2001;
+
+var code = AnsiConsole.Prompt(
+    new TextPrompt<int>("bitte code eingeben: ")
+        .Secret());
+
+if (code == Passwort)
 {
-    int Passwort = 2001;
+    LadeDaten();
 
-    Console.Write("Geben Sie den Code ein: ");
-    int Versuch = int.Parse(Console.ReadLine());
-
-    if (Versuch == Passwort)
+    void AskForSaving()
     {
-        LadeDaten();
+        // Ask the user to confirm
+        var confirmation = AnsiConsole.Prompt(
+            new ConfirmationPrompt("Möchtest du die aktuellen Daten speichern?"));
 
-        void AskForSaving()
+
+        Console.Write(": ");
+        string antwort = Console.ReadLine().ToLower();
+
+        if (confirmation)
         {
-            Console.Write("Möchtest du die aktuellen Daten speichern? (j/n): ");
-            string antwort = Console.ReadLine().ToLower();
-
-            if (antwort == "j")
-            {
-                SpeichereDaten();
-                Console.WriteLine("Daten wurden erfolgreich gespeichert.");
-            }
-            else
-            {
-                Console.WriteLine("Daten wurden nicht gespeichert.");
-            }
+            SpeichereDaten();
+            Console.WriteLine("Daten wurden erfolgreich gespeichert.");
         }
-
-        void LadeDaten()
+        else
         {
-            string pfad = "saved.csv";
+            Console.WriteLine("Daten wurden nicht gespeichert.");
+        }
+    }
 
-            if (File.Exists(pfad))
+    void LadeDaten()
+    {
+        string pfad = "saved.csv";
+
+        if (File.Exists(pfad))
+        {
+            string[] lines = File.ReadAllLines(pfad);
+            string[] data;
+
+            try
             {
-                string[] lines = File.ReadAllLines(pfad);
-                string[] data;
-
-                try
+                for (int i = 1; i < lines.Length - 1; i++) // Kopfzeile überspringen
                 {
-                    for (int i = 1; i < lines.Length - 1; i++) // Kopfzeile überspringen
-                    {
-                        data = lines[i].Split(';');
+                    data = lines[i].Split(';');
 
-                        Produktname[i] = data[0];
-                        Lagerstand[i] = int.Parse(data[1]);
-                        Preise[i] = double.Parse(data[2]);
-                    }
-
-                    if (double.TryParse(lines[^1], out double gespeicherterCash))
-                    {
-                        cash = gespeicherterCash;
-                    }
-                    else
-                    {
-                        Console.WriteLine("⚠️ Konnte den Kontostand nicht aus der letzten Zeile lesen.");
-                        cash = 0;
-                    }
-
-                    Console.WriteLine("Daten wurden geladen.");
+                    Produktname[i] = data[0];
+                    Lagerstand[i] = int.Parse(data[1]);
+                    Preise[i] = double.Parse(data[2]);
                 }
-                catch (Exception e)
+
+                if (double.TryParse(lines[^1], out double gespeicherterCash))
                 {
-                    Console.WriteLine($"Gespeicherte Daten konnten nicht geladen werden: {e.Message}");
-                    LadeStandarddaten();
+                    cash = gespeicherterCash;
                 }
+                else
+                {
+                    Console.WriteLine("⚠️ Konnte den Kontostand nicht aus der letzten Zeile lesen.");
+                    cash = 0;
+                }
+
+                Console.WriteLine("Daten wurden geladen.");
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine("Keine gespeicherten Daten gefunden. Standarddaten werden verwendet.");
+                Console.WriteLine($"Gespeicherte Daten konnten nicht geladen werden: {e.Message}");
                 LadeStandarddaten();
             }
         }
-
-        void LadeStandarddaten()
+        else
         {
-            cash = 0;
+            Console.WriteLine("Keine gespeicherten Daten gefunden. Standarddaten werden verwendet.");
+            LadeStandarddaten();
+        }
+    }
 
-            void SetzeProdukt(int nr, string name, double preis, int bestand)
-            {
-                Produktname[nr] = name;
-                Preise[nr] = preis;
-                Lagerstand[nr] = bestand;
-            }
+    void LadeStandarddaten()
+    {
+        cash = 0;
 
-            SetzeProdukt(1, "großes Buch", 5.00, 50);
-            SetzeProdukt(2, "kleines Buch", 2.50, 50);
-            SetzeProdukt(3, "Pixibuch", 1.50, 50);
-            SetzeProdukt(4, "Stofftier Groß", 15.00, 50);
-            SetzeProdukt(5, "Stofftier Mittel", 10.00, 50);
-            SetzeProdukt(6, "Stofftier Klein", 5.00, 50);
-            SetzeProdukt(7, "Chips 250g", 1.99, 50);
-            SetzeProdukt(8, "Chips 500g", 2.50, 50);
-            SetzeProdukt(9, "Chips 750g", 3.99, 50);
-            SetzeProdukt(10, "Chips 1kg", 5.00, 50);
-            SetzeProdukt(11, "Mehl 1kg", 2.39, 50);
-            SetzeProdukt(12, "Mehl Paket", 7.50, 50);
-            SetzeProdukt(13, "Mineral 750ml (6er Packung)", 9.99, 30);
-            SetzeProdukt(14, "Mineral 750ml (einzeln)", 2.12, 50);
-            SetzeProdukt(15, "Mineral 1l (6er Packung)", 11.33, 30);
-            SetzeProdukt(16, "Mineral 1l (einzeln)", 3.45, 50);
-            SetzeProdukt(17, "RedBull (6er Packung)", 5.00, 50);
-            SetzeProdukt(18, "RedBull (einzeln)", 0.46, 50);
-            SetzeProdukt(19, "Shampoo Loreal Paris", 3.44, 50);
-            SetzeProdukt(20, "Shampoo Nivea Men", 2.89, 50);
-            SetzeProdukt(21, "Shampoo Kerastase", 3.79, 50);
-            SetzeProdukt(22, "Shampoo New Lenghts", 3.47, 50);
-            SetzeProdukt(23, "Tierfutter 1kg", 11.00, 50);
-            SetzeProdukt(24, "Kissen", 5.66, 50);
-
-            Console.WriteLine("Standarddaten geladen.");
+        void SetzeProdukt(int nr, string name, double preis, int bestand)
+        {
+            Produktname[nr] = name;
+            Preise[nr] = preis;
+            Lagerstand[nr] = bestand;
         }
 
-        void SpeichereDaten()
-        {
-            string pfad = "saved.csv";
-            try
-            {
-                using StreamWriter writer = new StreamWriter(pfad, false, Encoding.UTF8);
-                writer.WriteLine("ProduktName;Lagerstand;Preise");
+        SetzeProdukt(1, "großes Buch", 5.00, 50);
+        SetzeProdukt(2, "kleines Buch", 2.50, 50);
+        SetzeProdukt(3, "Pixibuch", 1.50, 50);
+        SetzeProdukt(4, "Stofftier Groß", 15.00, 50);
+        SetzeProdukt(5, "Stofftier Mittel", 10.00, 50);
+        SetzeProdukt(6, "Stofftier Klein", 5.00, 50);
+        SetzeProdukt(7, "Chips 250g", 1.99, 50);
+        SetzeProdukt(8, "Chips 500g", 2.50, 50);
+        SetzeProdukt(9, "Chips 750g", 3.99, 50);
+        SetzeProdukt(10, "Chips 1kg", 5.00, 50);
+        SetzeProdukt(11, "Mehl 1kg", 2.39, 50);
+        SetzeProdukt(12, "Mehl Paket", 7.50, 50);
+        SetzeProdukt(13, "Mineral 750ml (6er Packung)", 9.99, 30);
+        SetzeProdukt(14, "Mineral 750ml (einzeln)", 2.12, 50);
+        SetzeProdukt(15, "Mineral 1l (6er Packung)", 11.33, 30);
+        SetzeProdukt(16, "Mineral 1l (einzeln)", 3.45, 50);
+        SetzeProdukt(17, "RedBull (6er Packung)", 5.00, 50);
+        SetzeProdukt(18, "RedBull (einzeln)", 0.46, 50);
+        SetzeProdukt(19, "Shampoo Loreal Paris", 3.44, 50);
+        SetzeProdukt(20, "Shampoo Nivea Men", 2.89, 50);
+        SetzeProdukt(21, "Shampoo Kerastase", 3.79, 50);
+        SetzeProdukt(22, "Shampoo New Lenghts", 3.47, 50);
+        SetzeProdukt(23, "Tierfutter 1kg", 11.00, 50);
+        SetzeProdukt(24, "Kissen", 5.66, 50);
 
-                for (int i = 1; i < Produktname.Length; i++)
+        Console.WriteLine("Standarddaten geladen.");
+    }
+
+    void SpeichereDaten()
+    {
+        string pfad = "saved.csv";
+        try
+        {
+            using StreamWriter writer = new StreamWriter(pfad, false, Encoding.UTF8);
+            writer.WriteLine("ProduktName;Lagerstand;Preise");
+
+            for (int i = 1; i < Produktname.Length; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(Produktname[i]))
                 {
-                    if (!string.IsNullOrWhiteSpace(Produktname[i]))
-                    {
-                        writer.WriteLine($"{Produktname[i]};{Lagerstand[i]};{Preise[i]}");
-                    }
+                    writer.WriteLine($"{Produktname[i]};{Lagerstand[i]};{Preise[i]}");
                 }
+            }
 
-                writer.WriteLine(cash.ToString("F2"));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fehler beim Speichern der Daten: {ex.Message}");
-            }
+            writer.WriteLine(cash.ToString("F2"));
         }
-
-        while (KomplettSchließen != 0)
+        catch (Exception ex)
         {
-            Verdienst = 0.00;
+            Console.WriteLine($"Fehler beim Speichern der Daten: {ex.Message}");
+        }
+    }
+
+    while (KomplettSchließen != 0)
+    {
+        Verdienst = 0.00;
+        Console.Write("Produktnummer: ");
+        Produktnummer = int.Parse(Console.ReadLine());
+        Console.WriteLine(" ");
+
+        weiterhinGeeoffnet = "Ja";
+
+        while (Produktnummer != 0)
+        {
+            Console.WriteLine($"Produktname: {Produktname[Produktnummer]}");
+            Console.WriteLine($"Produktpreis: {Preise[Produktnummer]:f2} Euro");
+            Console.WriteLine($"Lagerstand: {Lagerstand[Produktnummer]} Stück");
+            Console.WriteLine($" ");
             Console.Write("Produktnummer: ");
             Produktnummer = int.Parse(Console.ReadLine());
-            Console.WriteLine(" ");
+        }
 
-            weiterhinGeeoffnet = "Ja";
-
+        while (weiterhinGeeoffnet != "j")
+        {
+            Produktnummer = 1929;
+            Console.WriteLine($"Kassaerfassung: ");
             while (Produktnummer != 0)
             {
-                Console.WriteLine($"Produktname: {Produktname[Produktnummer]}");
-                Console.WriteLine($"Produktpreis: {Preise[Produktnummer]:f2} Euro");
-                Console.WriteLine($"Lagerstand: {Lagerstand[Produktnummer]} Stück");
-                Console.WriteLine($" ");
                 Console.Write("Produktnummer: ");
                 Produktnummer = int.Parse(Console.ReadLine());
-            }
-
-            while (weiterhinGeeoffnet != "j")
-            {
-                Produktnummer = 1929;
-                Console.WriteLine($"Kassaerfassung: ");
-                while (Produktnummer != 0)
+                if (Produktnummer != 0)
                 {
-                    Console.Write("Produktnummer: ");
-                    Produktnummer = int.Parse(Console.ReadLine());
-                    if (Produktnummer != 0)
+                    if (Lagerstand[Produktnummer] > 0)
                     {
-                        if (Lagerstand[Produktnummer] > 0)
-                        {
-                            Console.WriteLine($"Produktname: {Produktname[Produktnummer]}");
-                            Console.WriteLine($"Produktpreis: {Preise[Produktnummer]:f2} Euro");
-                            Summe += Preise[Produktnummer];
-                            Console.WriteLine($"{Summe:f2} Euro");
-                            Lagerstand[Produktnummer]--;
+                        Console.WriteLine($"Produktname: {Produktname[Produktnummer]}");
+                        Console.WriteLine($"Produktpreis: {Preise[Produktnummer]:f2} Euro");
+                        Summe += Preise[Produktnummer];
+                        Console.WriteLine($"{Summe:f2} Euro");
+                        Lagerstand[Produktnummer]--;
 
-                            if (Lagerstand[Produktnummer] <= 10)
-                                Console.WriteLine("Vorsicht Lagerstand niedrig!!!!");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Produkt ist nicht mehr im Lager oder existiert nicht!");
-                        }
+                        if (Lagerstand[Produktnummer] <= 10)
+                            Console.WriteLine("Vorsicht Lagerstand niedrig!!!!");
                     }
                     else
                     {
-                        Console.Write("Ermäßigung (%): ");
-                        Ermäßigungen = double.Parse(Console.ReadLine());
-                        Ermäßigungen = 1 - (Ermäßigungen / 100);
-                        Summe *= Ermäßigungen;
-                        Verdienst += Summe;
-
-                        Console.WriteLine($"Zu zahlender Betrag: {Summe:f2} Euro");
-                        Summe = 0;
+                        Console.WriteLine("Produkt ist nicht mehr im Lager oder existiert nicht!");
                     }
                 }
+                else
+                {
+                    Console.Write("Ermäßigung (%): ");
+                    Ermäßigungen = double.Parse(Console.ReadLine());
+                    Ermäßigungen = 1 - (Ermäßigungen / 100);
+                    Summe *= Ermäßigungen;
+                    Verdienst += Summe;
 
-                Console.Write("Schließen Sie jetzt? (j/n): ");
-                weiterhinGeeoffnet = Console.ReadLine().ToLower();
+                    Console.WriteLine($"Zu zahlender Betrag: {Summe:f2} Euro");
+                    Summe = 0;
+                }
             }
 
-            Console.WriteLine();
-            Console.WriteLine($"Verdienst Brutto: {Verdienst:f2} Euro");
-            Verdienst /= 1.20;
-            Console.WriteLine($"Verdienst Netto: {Verdienst:f2} Euro");
+            Console.Write("Schließen Sie jetzt? (j/n): ");
+            weiterhinGeeoffnet = Console.ReadLine().ToLower();
+        }
 
-            cash += Verdienst;
+        Console.WriteLine();
+        Console.WriteLine($"Verdienst Brutto: {Verdienst:f2} Euro");
+        Verdienst /= 1.20;
+        Console.WriteLine($"Verdienst Netto: {Verdienst:f2} Euro");
 
-            AuffüllenMitKosten();
+        cash += Verdienst;
 
-            void ProduktHinzufügen()
+        AuffüllenMitKosten();
+
+        void ProduktHinzufügen()
+        {
+            Console.Write("Gib die Produktnummer ein (zwischen 1 und 999): ");
+            int nummer = int.Parse(Console.ReadLine());
+
+            if (nummer < 1 || nummer >= Produktname.Length)
             {
-                Console.Write("Gib die Produktnummer ein (zwischen 1 und 999): ");
-                int nummer = int.Parse(Console.ReadLine());
+                Console.WriteLine("Ungültige Produktnummer.");
+                return;
+            }
 
-                if (nummer < 1 || nummer >= Produktname.Length)
+            if (!string.IsNullOrEmpty(Produktname[nummer]))
+            {
+                Console.WriteLine("An dieser Stelle existiert bereits ein Produkt.");
+                return;
+            }
+
+            Console.Write("Gib den Produktnamen ein: ");
+            string name = Console.ReadLine();
+
+            Console.Write("Gib den Verkaufspreis ein (z. B. 4.99): ");
+            if (!double.TryParse(Console.ReadLine().Replace(',', '.'), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double preis) || preis <= 0)
+            {
+                Console.WriteLine("Ungültiger Preis.");
+                return;
+            }
+
+            Console.Write("Wie viele Stück sollen eingelagert werden?: ");
+            if (!int.TryParse(Console.ReadLine(), out int bestand) || bestand <= 0)
+            {
+                Console.WriteLine("Ungültige Menge.");
+                return;
+            }
+
+            double einkaufswert = preis * 0.40 * bestand;
+
+            if (einkaufswert > cash)
+            {
+                Console.WriteLine($"Nicht genug Guthaben: benötigt {einkaufswert:F2} €, vorhanden {cash:F2} €.");
+                return;
+            }
+
+            Produktname[nummer] = name;
+            Preise[nummer] = preis;
+            Lagerstand[nummer] = bestand;
+            cash -= einkaufswert;
+
+            Console.WriteLine($"✔ Produkt '{name}' wurde erfolgreich angelegt!");
+        }
+
+        AskForSaving();
+
+        Console.WriteLine($"Aktuelles Guthaben: {cash:F2} €");
+
+        Console.Write("Willst du ein neues Produkt hinzufügen? (j/n): ");
+        if (Console.ReadLine().ToLower() == "j")
+        {
+            ProduktHinzufügen();
+        }
+
+        void AuffüllenMitKosten()
+        {
+            const double einkaufsfaktor = 0.40;
+
+            while (true)
+            {
+                Console.Write("Produktnummer zum Auffüllen (0 = Ende): ");
+                if (!int.TryParse(Console.ReadLine(), out int nummer) || nummer == 0)
+                    break;
+
+                if (string.IsNullOrEmpty(Produktname[nummer]))
                 {
-                    Console.WriteLine("Ungültige Produktnummer.");
-                    return;
+                    Console.WriteLine("Dieses Produkt existiert nicht.");
+                    continue;
                 }
 
-                if (!string.IsNullOrEmpty(Produktname[nummer]))
-                {
-                    Console.WriteLine("An dieser Stelle existiert bereits ein Produkt.");
-                    return;
-                }
-
-                Console.Write("Gib den Produktnamen ein: ");
-                string name = Console.ReadLine();
-
-                Console.Write("Gib den Verkaufspreis ein (z. B. 4.99): ");
-                if (!double.TryParse(Console.ReadLine().Replace(',', '.'), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double preis) || preis <= 0)
-                {
-                    Console.WriteLine("Ungültiger Preis.");
-                    return;
-                }
-
-                Console.Write("Wie viele Stück sollen eingelagert werden?: ");
-                if (!int.TryParse(Console.ReadLine(), out int bestand) || bestand <= 0)
+                Console.Write($"Wie viele Stück von '{Produktname[nummer]}'?: ");
+                if (!int.TryParse(Console.ReadLine(), out int menge) || menge <= 0)
                 {
                     Console.WriteLine("Ungültige Menge.");
-                    return;
+                    continue;
                 }
 
-                double einkaufswert = preis * 0.40 * bestand;
+                double kosten = Preise[nummer] * einkaufsfaktor * menge;
 
-                if (einkaufswert > cash)
+                if (kosten > cash)
                 {
-                    Console.WriteLine($"Nicht genug Guthaben: benötigt {einkaufswert:F2} €, vorhanden {cash:F2} €.");
-                    return;
+                    Console.WriteLine($"Nicht genug Guthaben: benötigt {kosten:F2} €, vorhanden {cash:F2} €.");
+                    continue;
                 }
 
-                Produktname[nummer] = name;
-                Preise[nummer] = preis;
-                Lagerstand[nummer] = bestand;
-                cash -= einkaufswert;
+                Lagerstand[nummer] += menge;
+                cash -= kosten;
 
-                Console.WriteLine($"✔ Produkt '{name}' wurde erfolgreich angelegt!");
+                Console.WriteLine($"{menge} Stück von '{Produktname[nummer]}' wurden aufgefüllt. Neues Guthaben: {cash:F2} €");
             }
-
-            AskForSaving();
-
-            Console.WriteLine($"Aktuelles Guthaben: {cash:F2} €");
-
-            Console.Write("Willst du ein neues Produkt hinzufügen? (j/n): ");
-            if (Console.ReadLine().ToLower() == "j")
-            {
-                ProduktHinzufügen();
-            }
-
-            void AuffüllenMitKosten()
-            {
-                const double einkaufsfaktor = 0.40;
-
-                while (true)
-                {
-                    Console.Write("Produktnummer zum Auffüllen (0 = Ende): ");
-                    if (!int.TryParse(Console.ReadLine(), out int nummer) || nummer == 0)
-                        break;
-
-                    if (string.IsNullOrEmpty(Produktname[nummer]))
-                    {
-                        Console.WriteLine("Dieses Produkt existiert nicht.");
-                        continue;
-                    }
-
-                    Console.Write($"Wie viele Stück von '{Produktname[nummer]}'?: ");
-                    if (!int.TryParse(Console.ReadLine(), out int menge) || menge <= 0)
-                    {
-                        Console.WriteLine("Ungültige Menge.");
-                        continue;
-                    }
-
-                    double kosten = Preise[nummer] * einkaufsfaktor * menge;
-
-                    if (kosten > cash)
-                    {
-                        Console.WriteLine($"Nicht genug Guthaben: benötigt {kosten:F2} €, vorhanden {cash:F2} €.");
-                        continue;
-                    }
-
-                    Lagerstand[nummer] += menge;
-                    cash -= kosten;
-
-                    Console.WriteLine($"{menge} Stück von '{Produktname[nummer]}' wurden aufgefüllt. Neues Guthaben: {cash:F2} €");
-                }
-            }
-
-            Console.Write("Drücken Sie Enter zum Fortfahren...");
-            Console.ReadLine();
-            Console.Clear();
         }
-    }
-    else
-    {
-        for (int i = 0; i <= 10; i++)
-        {
-            Console.Beep();
-            await Task.Delay(1000);
-        }
+
+        Console.Write("Drücken Sie Enter zum Fortfahren...");
+        Console.ReadLine();
+        Console.Clear();
     }
 }

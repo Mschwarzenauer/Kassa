@@ -441,11 +441,10 @@ async void FrageCode()
     else
     {
 
-        while (Wiederholungen != 10)
+        for(int i = 0; i < 10; i++)
         {
             Console.Beep();
             await Task.Delay(100);
-            Wiederholungen = Wiederholungen + 1;
         }
     }
 }

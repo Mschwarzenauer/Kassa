@@ -33,7 +33,6 @@ FrageCode();
 async void FrageCode()
 {
     int Passwort = 2001;
-    int Wiederholungen = 0;
 
 
 
@@ -444,7 +443,7 @@ async void FrageCode()
         for(int i = 0; i < 10; i++)
         {
             Console.Beep();
-            await Task.Delay(300);
-        } 
+            Task.Delay(300);
+        }
     }
 }

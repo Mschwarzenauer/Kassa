@@ -379,7 +379,7 @@ async void FrageCode()
 
             AskForSaving();
 
-            Console.WriteLine($"Sie haben aktuell {cash}€ am Bankkonto");
+            Console.WriteLine($"Sie haben aktuell {cash:F2}€ am Bankkonto");
 
             Console.Write("Willst du ein neues Produkt hinzufügen? (j/n): ");
             string antwort = Console.ReadLine().ToLower();

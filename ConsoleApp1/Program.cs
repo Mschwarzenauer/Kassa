@@ -444,7 +444,7 @@ async void FrageCode()
         for(int i = 0; i < 10; i++)
         {
             Console.Beep();
-            await Task.Delay(1000);
+            await Task.Delay(300);
         } 
     }
 }

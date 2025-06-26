@@ -28,14 +28,14 @@ int Auffüllobjekte = 1;
 int KomplettSchließen = 1;
 double cash = 0;
 
-
+LadeDaten();
 
 void AskForSaving()
 {
-    Console.Write("Möchtest du die aktuellen Daten speichern? (y/n): ");
+    Console.Write("Möchtest du die aktuellen Daten speichern? (j/n): ");
     string antwort = Console.ReadLine().ToLower();
 
-    if (antwort == "y")
+    if (antwort == "j")
     {
         SpeichereDaten();
         Console.WriteLine("Daten wurden erfolgreich gespeichert.");
@@ -47,6 +47,76 @@ void AskForSaving()
 }
 
 
+void LadeDaten()
+{
+    if (File.Exists("saved.csv"))
+    {
+        Console.Write("Gespeicherte Daten wurden gefunden. Möchtest du sie laden? (j/n): ");
+        string antwort = Console.ReadLine().ToLower();
+
+        if (antwort == "j")
+        {
+            try
+            {
+                string[] zeilen = File.ReadAllLines("saved.csv");
+
+                if (zeilen.Length < 2)
+                {
+                    Console.WriteLine("Die gespeicherte Datei enthält keine gültigen Produktdaten. Standardwerte werden geladen.");
+                    LadeStandarddaten();
+                    return;
+                }
+
+                for (int i = 1; i < zeilen.Length; i++)
+                {
+                    string[] teile = zeilen[i].Split(',');
+
+                    if (teile[0] == "CASH")
+                    {
+                        if (double.TryParse(teile[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double gespeicherterCash))
+                        {
+                            cash = gespeicherterCash;
+                        }
+                    }
+                    else if (teile.Length == 4 &&
+                             int.TryParse(teile[0], out int nummer) &&
+                             double.TryParse(teile[2].Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture, out double preis) &&
+                             int.TryParse(teile[3], out int lager))
+                    {
+                        Produktname[nummer] = teile[1];
+                        Preise[nummer] = preis;
+                        Lagerstand[nummer] = lager;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Fehlerhafte Daten in Zeile {i + 1}: {zeilen[i]}. Standardwerte werden geladen.");
+                        LadeStandarddaten();
+                        return;
+                    }
+                }
+
+
+
+                Console.WriteLine("Gespeicherte Daten wurden erfolgreich geladen.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fehler beim Laden der gespeicherten Daten: {ex.Message}. Standardwerte werden verwendet.");
+                LadeStandarddaten();
+            }
+        }
+        else
+        {
+            Console.WriteLine("Standarddaten werden verwendet.");
+            LadeStandarddaten();
+        }
+    }
+    else
+    {
+        Console.WriteLine("Keine gespeicherten Daten gefunden. Standarddaten werden verwendet.");
+        LadeStandarddaten();
+    }
+}
 
 
 

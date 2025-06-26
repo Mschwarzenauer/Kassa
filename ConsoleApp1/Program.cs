@@ -54,7 +54,7 @@ void LadeDaten()
 
     if (File.Exists("saved.csv"))
     {
-        for (int i = 0; i < lines.Length; i++)
+        for (int i = 0; i < lines.Length - 1; i++)
         {
             data = lines[i].Split(';');
 
@@ -62,6 +62,8 @@ void LadeDaten()
             Lagerstand[i] = int.Parse(data[1]);
             Preise[i] = double.Parse(data[2]);
         }
+
+        cash = double.Parse(lines[lines.Length - 1]);
 
         Console.WriteLine("daten wurden geladen");
     }
@@ -184,8 +186,8 @@ void SpeichereDaten()
 {
     try
     {
-        string[] data = new string[Produktname.Length];
-        string[] lines = new string[Produktname.Length];
+        string[] data = new string[Produktname.Length + 1];
+        string[] lines = new string[3];
 
         data[0] = "ProduktName;Lagerstand;Preise";
 
@@ -199,6 +201,7 @@ void SpeichereDaten()
             data[i + 1] = combined;
         }
 
+        data[data.Length - 1] = Convert.ToString(cash);
         File.WriteAllLines("saved.csv", data);
 
         Console.WriteLine($"Daten wurden erfolgreich in '' gespeichert.");

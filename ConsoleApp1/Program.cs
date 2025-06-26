@@ -443,7 +443,7 @@ async void FrageCode()
         for(int i = 0; i <= 10; i++)
         {
             Console.Beep();
-            Task.Delay(300);
+            Task.Delay(1000);
         }
     }
 }

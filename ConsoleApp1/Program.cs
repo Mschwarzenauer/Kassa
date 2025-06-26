@@ -49,67 +49,21 @@ void AskForSaving()
 
 void LadeDaten()
 {
+    string[] lines = File.ReadAllLines("saved.csv");
+    string[] data;
+
     if (File.Exists("saved.csv"))
     {
-        Console.Write("Gespeicherte Daten wurden gefunden. Möchtest du sie laden? (j/n): ");
-        string antwort = Console.ReadLine().ToLower();
-
-        if (antwort == "j")
+        for (int i = 0; i < lines.Length; i++)
         {
-            try
-            {
-                string[] zeilen = File.ReadAllLines("saved.csv");
+            data = lines[i].Split(';');
 
-                if (zeilen.Length < 2)
-                {
-                    Console.WriteLine("Die gespeicherte Datei enthält keine gültigen Produktdaten. Standardwerte werden geladen.");
-                    LadeStandarddaten();
-                    return;
-                }
-
-                for (int i = 1; i < zeilen.Length; i++)
-                {
-                    string[] teile = zeilen[i].Split(',');
-
-                    if (teile[0] == "CASH")
-                    {
-                        if (double.TryParse(teile[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double gespeicherterCash))
-                        {
-                            cash = gespeicherterCash;
-                        }
-                    }
-                    else if (teile.Length == 4 &&
-                             int.TryParse(teile[0], out int nummer) &&
-                             double.TryParse(teile[2].Replace(',', '.'), System.Globalization.CultureInfo.InvariantCulture, out double preis) &&
-                             int.TryParse(teile[3], out int lager))
-                    {
-                        Produktname[nummer] = teile[1];
-                        Preise[nummer] = preis;
-                        Lagerstand[nummer] = lager;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Fehlerhafte Daten in Zeile {i + 1}: {zeilen[i]}. Standardwerte werden geladen.");
-                        LadeStandarddaten();
-                        return;
-                    }
-                }
-
-
-
-                Console.WriteLine("Gespeicherte Daten wurden erfolgreich geladen.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fehler beim Laden der gespeicherten Daten: {ex.Message}. Standardwerte werden verwendet.");
-                LadeStandarddaten();
-            }
+            Produktname[i] = data[0];
+            Lagerstand[i] = int.Parse(data[1]);
+            Preise[i] = double.Parse(data[2]);
         }
-        else
-        {
-            Console.WriteLine("Standarddaten werden verwendet.");
-            LadeStandarddaten();
-        }
+
+        Console.WriteLine("daten wurden geladen");
     }
     else
     {

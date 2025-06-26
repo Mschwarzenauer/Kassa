@@ -207,6 +207,7 @@ async void FrageCode()
 
         void SpeichereDaten()
         {
+            File.Delete("saved.csv");
             try
             {
                 string[] data = new string[Produktname.Length];

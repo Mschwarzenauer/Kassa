@@ -32,10 +32,10 @@ double cash = 0;
 
 void AskForSaving()
 {
-    Console.Write("Möchtest du die aktuellen Daten speichern? (j/n): ");
+    Console.Write("Möchtest du die aktuellen Daten speichern? (y/n): ");
     string antwort = Console.ReadLine().ToLower();
 
-    if (antwort == "j")
+    if (antwort == "y")
     {
         SpeichereDaten();
         Console.WriteLine("Daten wurden erfolgreich gespeichert.");

@@ -164,7 +164,7 @@ if (code == Passwort)
                 }
             }
 
-            writer.WriteLine(cash.ToString("F2"));
+            writer.WriteLine(cash.ToString("2"));
         }
         catch (Exception ex)
         {
@@ -345,4 +345,8 @@ if (code == Passwort)
         Console.ReadLine();
         Console.Clear();
     }
+}
+else
+{
+    Console.WriteLine("Zugang verweigert.");
 }

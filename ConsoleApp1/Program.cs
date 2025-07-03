@@ -84,7 +84,7 @@ if (code == Passwort)
                     Preise[i] = double.Parse(data[2]);
                 }
 
-                if (double.TryParse(lines[^1], out double gespeicherterCash))
+                if (double.TryParse(lines[1], out double gespeicherterCash))
                 {
                     cash = gespeicherterCash;
                 }
@@ -153,6 +153,10 @@ if (code == Passwort)
         string pfad = "saved.csv";
         try
         {
+            if(File.Exists(pfad))
+            {
+                File.Delete(pfad);
+            }
             using StreamWriter writer = new StreamWriter(pfad, false, Encoding.UTF8);
             writer.WriteLine("ProduktName;Lagerstand;Preise");
 
@@ -164,7 +168,7 @@ if (code == Passwort)
                 }
             }
 
-            writer.WriteLine(cash.ToString("2"));
+            writer.WriteLine(cash.ToString());
         }
         catch (Exception ex)
         {

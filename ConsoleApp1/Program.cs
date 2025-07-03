@@ -32,7 +32,7 @@ var code = 1;
 AnsiConsole.Write(
     new FigletText("Projekt - Kassa")
         .LeftJustified()
-        .Color(Color.Red));
+        .Color(ConsoleColor.Gray));
 
 
 int Passwort = 2001;

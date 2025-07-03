@@ -23,7 +23,7 @@ double Summe = 0;
 double Verdienst = 0;
 
 string weiterhinGeeoffnet;
-int KomplettSchließen = 1;
+string KomplettSchließen = "n";
 double cash = 0;
 
 var code = 1;
@@ -179,7 +179,7 @@ do
             }
         }
 
-        while (KomplettSchließen != 0)
+        while (KomplettSchließen != "j")
         {
             Verdienst = 0.00;
             Console.Write("Produktnummer: ");
@@ -351,6 +351,9 @@ do
             Console.Write("Drücken Sie Enter zum Fortfahren...");
             Console.ReadLine();
             Console.Clear();
+
+            Console.Write("Wollen Sie den Tag beenden?");
+            KomplettSchließen = Console.ReadLine();
         }
     }
     else
